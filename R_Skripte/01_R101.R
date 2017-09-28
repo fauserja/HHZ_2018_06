@@ -14,7 +14,7 @@ print(a)
 a
 a + 5
 
-# 03: Atomic Classes (Basis Objekt-Klassen)
+# 03: Atomic Classes (Basis Objekt-Klassen) ------------------------------------
 a  # numerisch (Gleitkommazahlen)
 class(32.5)
 
@@ -30,7 +30,7 @@ class(bool1)
 
 # darüber hinaus: komplexe Zahlen
 
-# 03: Vektoren -----------------------------------------------------------------
+# 04: Vektoren -----------------------------------------------------------------
 vec1 <- c(12, 34, 17, 18, 99, 7)
 
 vec2 <- c("Hans", "Martin", "Rolf")
@@ -38,15 +38,19 @@ vec2 <- c("Hans", "Martin", "Rolf")
 c("Hans", 43)
 c(2L, FALSE)
 
-# 04: Nützliche Funktionen zum Erzeugen von Vektoren ---------------------------
+# 05: Nützliche Funktionen zum Erzeugen von Vektoren ---------------------------
 vec3 <- c(1, 2, 3, 4)
 vec4 <- 1:4  # sequence operator 
 vec5 <- 2:500
 vec6 <- rep(vec2, times = 3)
 vec6
 rep(vec2, each = 3)
-# vgl. R Reference Card
+# vgl. R Reference Card (https://cran.r-project.org/doc/contrib/Short-refcard.pdf)
 
+# Zum besseren Verständnis einzelner Funktionen bietet es sich an, die Beispiele
+# der Hilfeseite durchzuspielen. Diese können mittels Copy&Paste einfach in die
+# Konsole oder den Skript kopiert werden.
+?rep
 rep(1:4, 2)
 rep(1:4, each = 2)       # not the same.
 rep(1:4, c(2,2,2,2))     # same as second.
@@ -55,23 +59,23 @@ rep(1:4, each = 2, len = 4)    # first 4 only.
 rep(1:4, each = 2, len = 10)   # 8 integers plus two recycled 1's.
 rep(1:4, each = 2, times = 3)  # length 24, 3 complete replications
 
-# 05: Mathematische Operationen mit Vektoren -----------------------------------
-vec1 / 60
+# 06: Mathematische Operationen mit Vektoren -----------------------------------
+vec1 / 60  # Verknüpfung eines Vektors mit einem Skalar
 zeitAufessen <- vec1
 anzahlBlaetter <- c(1, 3, 1, 4, 10, 1)
-zeitAufessen / anzahlBlaetter
+zeitAufessen / anzahlBlaetter  # Verknüpfung zweier Vektoren
 
 # Achtung: Vektoren unterschiedlicher Längen
 anzahlBlaetter
 anzahlBlaetter / 1:3
 anzahlBlaetter / 1:5
 
-# 06: weitere Operationen ------------------------------------------------------
+# weitere Operationen
 anzahlBlaetter + zeitAufessen  # Summe
 anzahlBlaetter * zeitAufessen  # Produkt
 anzahlBlaetter^zeitAufessen    # Exponent
 
-# Kombination von Opertaionen:
+# Kombination von skalaren und vektoriellen Operationen:
 (zeitAufessen * 60)/(anzahlBlaetter + 2)
 
 
@@ -91,6 +95,7 @@ class(names(namedVector))
 length(names(namedVector))
 
 # 08: Matrizen ----------------------------------------------------------------- 
+# Matrizen = Vektoren mit Dimensions-Argument
 dim(namedVector)
 x <- 1:25
 dim(x)
@@ -125,11 +130,6 @@ matB
 matA * matB   # Multiplikation paarweise
 matA %*% matB # Echte Matrix-Multiplikation
 
-
 matC
-
-
-
-# 08: Listen (generische Vektoren)
 
 

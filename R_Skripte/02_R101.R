@@ -25,7 +25,7 @@ d <- data.frame(vornamen = c("Rolf", "Hans", "Christian"),
                 alter = c(33, 44, 45))
 
 
-# 03: Faktoren
+# 03: Faktoren -----------------------------------------------------------------
 x <- factor(c("yes", "no", "yes", "yes", "no", "yes"))
 x
 table(x)
@@ -73,8 +73,8 @@ x[c(1, 3, 5)]
 
 # Alle Elemente die im Alphabet hinter "b" stehen
 "a" > "b"
-x > "b"
-x[x > "b"]
+x > "b"     # Logischer Vektor
+x[x > "b"]  # Logisches Subsettings
 
 names(x) <- LETTERS[1:length(x)]
 letters
@@ -107,12 +107,14 @@ d2[1:2, "vornamen"]
 d2$vornamen[1:2]
 
 
+# Beispiel: Subsetting innerhlab einer Schleife
 for(spalte in names(d2)){
   print(d2[[spalte]])
 }
 
 
-# Welche Spalte ist von INteresse?
+# Welche Spalte ist von Interesse?
+# Ansprechen von Spalten über Namen, die in einer Variablen hinterlegt sind.
 colOfInterest <- "nachnamen"
 d2[[colOfInterest]]
 

@@ -15,13 +15,13 @@ dat <- read.csv("Data/preg.csv")
 dat
 
 
-# 03: Vom Wide zum LOng-Format (gather)
+# 03: Vom Wide zum LOng-Format (gather) ----------------------------------------
 datTidy <- dat %>% 
   gather(key = "Behandlung", value = "Anzahl", treatmenta, treatmentb) %>% 
   mutate(Behandlung = gsub("treatment", "", Behandlung))
 datTidy
 
-# 04: Vom Long- zum Wide-Format (spread)
+# 04: Vom Long- zum Wide-Format (spread) ---------------------------------------
 weather <- read.csv("Data/weather2.csv")
 head(weather)
 
@@ -29,7 +29,7 @@ weather %>%
   spread(key = element, value = value) %>% 
   head
 
-# 05: Problme mehrerer Informationen in einer Zelle
+# 05: Problem mehrerer Informationen in einer Zelle ----------------------------
 tb <- read.csv("Data/tb2.csv")
 
 tail(tb)
@@ -40,7 +40,7 @@ tbTidy <- tb %>%
   separate(demo, c("geschl", "alter"), 1)
 head(tbTidy)
 
-# 06: Ternnung von INformationen unterschiedlicher Granularität 
+# 06: Trennung von Informationen unterschiedlicher Granularität ----------------
 billboard <- read.csv("Data/billboard2.csv")
 head(billboard)
 

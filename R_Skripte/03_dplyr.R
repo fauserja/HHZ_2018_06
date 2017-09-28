@@ -1,33 +1,34 @@
-###################################################################
-# Einlesen von Daten                                              #
-###################################################################
+################################################################################
+# Datenmanagement mit `dplyr`                                                  #
+# 25.9.2017                                                                    #
+################################################################################
 
-# 00: Löschen des Workspace ---------------------------------------
+# 00: Löschen des Workspace ----------------------------------------------------
 rm(list ) ls(all.names = TRUE)
 
-## 01a: Laden zusätzlicher Pakete ---------------------------------
+## 01a: Laden zusätzlicher Pakete ----------------------------------------------
 library(dplyr)
 
-# 01: Einlesen der Dateien ----------------------------------------
+# 01: Einlesen der Dateien -----------------------------------------------------
 dat <- read.csv(file = "Data/Analytics.csv")
 
-# 02: Auswahl einzelner Spalten
+# 02: Auswahl einzelner Spalten ------------------------------------------------
 select(dat, date, users, userGender)
 
-# 03: Auswahl einzelner Zeilen
+# 03: Auswahl einzelner Zeilen -------------------------------------------------
 slice(dat, 1:10)
 filter(dat, userGender == "female", users > 15)
 
-# 04: Sortieren des Datensatzes
+# 04: Sortieren des Datensatzes ------------------------------------------------
 slice(arrange(dat, desc(users)), 1:10)
 
-# 05: Erzeugung neuer Variablen (zeilenweise pro U.E.)
+# 05: Erzeugung neuer Variablen (zeilenweise pro U.E.) -------------------------
 mutate(dat, avgSessionDuration = sessionDuration/sessions)
 
-# 06: Aggregationsfunktion
+# 06: Aggregationsfunktion -----------------------------------------------------
 summarise(dat, meanSessions = mean(sessions))
 
-# 07: Chaining 
+# 07: Chaining -----------------------------------------------------------------
 dat %>% 
   select(date, users, userGender) %>% 
   slice(1:10) %>% 
@@ -35,7 +36,7 @@ dat %>%
   group_by(userGender) %>% 
   summarise(meanUsers = mean(users))
 
-
+# 08: Gruppierung und gruppenspezifische Berechnungen --------------------------
 dat %>% 
   group_by(userGender) %>%
   mutate(meanUsers = mean(users),
