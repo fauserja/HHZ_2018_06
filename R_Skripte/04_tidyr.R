@@ -15,7 +15,7 @@ dat <- read.csv("Data/preg.csv")
 dat
 
 
-# 03: Vom Wide zum LOng-Format (gather) ----------------------------------------
+# 03: Vom Wide zum Long-Format (gather) ----------------------------------------
 datTidy <- dat %>% 
   gather(key = "Behandlung", value = "Anzahl", treatmenta, treatmentb) %>% 
   mutate(Behandlung = gsub("treatment", "", Behandlung))
