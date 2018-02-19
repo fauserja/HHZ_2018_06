@@ -8,6 +8,7 @@ rm(list = ls(all.names = TRUE))
 
 # 01: Laden der zusätzlichen Pakete --------------------------------------------
 library(tidyr)
+library(dplyr)
 search()
 
 # 02: Laden der Daten ----------------------------------------------------------
@@ -43,6 +44,7 @@ head(tbTidy)
 # 06: Trennung von Informationen unterschiedlicher Granularität ----------------
 billboard <- read.csv("Data/billboard2.csv")
 head(billboard)
+View(billboard)
 
 songInfo <- billboard %>% 
   select(artist, track, time, date) %>% 
