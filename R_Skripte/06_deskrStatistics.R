@@ -81,7 +81,7 @@ ggplot(dat,
   geom_histogram(bins = 100) +
   facet_grid(open ~ .)
 
-# 05: Identifaktion der auffälligen Beobachtungen ------------------------------
+# 05: Identifikation der auffälligen Beobachtungen -----------------------------
 datSpooky <- dat %>% 
   filter((open == 1 & (sales == 0 | customer == 0)) |
          (open == 0 & (sales > 0 | customer > 0)))
