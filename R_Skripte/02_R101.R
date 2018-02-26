@@ -107,7 +107,7 @@ d2[1:2, "vornamen"]
 d2$vornamen[1:2]
 
 
-# Beispiel: Subsetting innerhlab einer Schleife
+# Beispiel: Subsetting innerhalb einer Schleife
 for(spalte in names(d2)){
   print(d2[[spalte]])
 }
