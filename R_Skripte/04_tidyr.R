@@ -18,7 +18,7 @@ dat
 
 # 03: Vom Wide zum Long-Format (gather) ----------------------------------------
 datTidy <- dat %>% 
-  gather(key = "Behandlung", value = "Anzahl", treatmenta, treatmentb) %>% 
+  gather(key = Behandlung, value = Anzahl, treatmenta, treatmentb) %>% 
   mutate(Behandlung = gsub("treatment", "", Behandlung))
 datTidy
 
@@ -48,7 +48,7 @@ View(billboard)
 
 songInfo <- billboard %>% 
   select(artist, track, time, date) %>% 
-  unique  # alternative: dplyr::distinct
+  distinct  # alternative: unique
 
 rankInfo <- billboard %>% 
   select(artist, track, week, rank) %>% 

@@ -1,6 +1,6 @@
 ################################################################################
 # Recap                                                                        #
-# 20./21. Februar 2018                                                         #
+# 21. Februar 2018                                                             #
 ################################################################################
 
 # 00: Leeren des Workspace -----------------------------------------------------
@@ -23,6 +23,12 @@ class(z)
 
 # 03: Subsetting ---------------------------------------------------------------
 y[3:4]
+x[x > 5]
+names(x) <- letters[1:length(x)]
+x[names(x) > "c"]
+x[c("a", "c", "e")]
+x[["a"]]
+
 
 # Länge
 length(x)
@@ -33,8 +39,8 @@ u <- 1:3
 k <- 10:12
 
 cbind(u, k)
-rbind(u, k)
-
+mat <- rbind(u, k)
+attributes(mat)
 
 # 05: Listen! ------------------------------------------------------------------
 niceList <- list(eine = 1, 
@@ -53,6 +59,7 @@ mean(mydf$Points, na.rm = TRUE)
 
 
 # 07: Fehlende Werte (NA) ------------------------------------------------------
+mydf$Points == NA
 is.na(mydf)
 complete.cases(mydf)
 na.omit(mydf)
@@ -63,6 +70,8 @@ library(tidyr)
 library(dplyr)
 
 dat <- read.table(file = "Data/anscombe.txt", header = TRUE)
+View(dat)
+
 
 dat <- dat %>% 
   mutate(id = 1:n()) %>% 
