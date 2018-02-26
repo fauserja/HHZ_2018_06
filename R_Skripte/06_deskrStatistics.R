@@ -29,6 +29,7 @@ dat <- dat %>%
          store = factor(store))
 
 str(dat)
+# mean, median, min, max, range
 summary(dat)
 
 
@@ -51,10 +52,16 @@ table(dat$holidaySchool, dat$holidayState, dnn =c("school", "state")) %>%
 # 04: Histogramm bei metrischen Variablen --------------------------------------
 
 # Betrachtung der Verteilung der Kunden
-ggplot(dat %>% 
-         filter(customer > 0),
-       aes(x = customer)) +
-  geom_histogram(bins = 100)
+dat %>% 
+  ggplot(aes(x = customer)) +
+  geom_histogram() +
+  coord_cartesian(xlim = c(1, 5000)) +
+  xlim(1, 5000)
+
+dat %>% 
+  ggplot(aes(x = customer)) +
+  geom_histogram() +
+  facet_grid(open ~ .)
 
 ggplot(dat,
        aes(x = customer)) +
@@ -71,7 +78,7 @@ p <- ggplot(dat,
   geom_histogram(bins = 100)
 
 ggplot(dat,
-       aes(x = customer)) +
+       aes(x = customer, fill = factor(promo))) +
   geom_histogram(bins = 100) +
   facet_grid(open ~ .)
 
@@ -81,7 +88,7 @@ ggplot(dat,
   geom_histogram(bins = 100) +
   facet_grid(open ~ .)
 
-# 05: Identifaktion der auffälligen Beobachtungen ------------------------------
+# 05: Identifikation der auffälligen Beobachtungen -----------------------------
 datSpooky <- dat %>% 
   filter((open == 1 & (sales == 0 | customer == 0)) |
          (open == 0 & (sales > 0 | customer > 0)))
@@ -103,6 +110,10 @@ summary(datKorr)
 # sonst scatter-Plot über Funktion `geom_points`
 ggplot(datKorr,
        aes(x = customer, y = sales)) +
+  geom_point()
+
+ggplot(datKorr,
+       aes(x = customer, y = sales)) +
   geom_bin2d()
 
 # 07: Zusammenhang kategoriale vs metrische Variable ---------------------------
@@ -111,8 +122,7 @@ ggplot(datKorr,
 
 ggplot(datKorr,
        aes(x = weekDay, y = customer)) +
-  geom_boxplot() +
-  facet_grid(open ~ .)
+  geom_boxplot()
 
 
 ggplot(datKorr %>% 
@@ -149,11 +159,12 @@ datKorr %>%
   mutate(salesPerCustomer = sales/customer) %>% 
   filter(salesPerCustomer > 10)
 
+
 ggplot(datKorr %>% 
          mutate(salesPerCustomer = sales/customer),
-       aes(x = weekDay, y = salesPerCustomer, col = weekDay)) +
+       aes(x = weekDay, y = salesPerCustomer, fill = weekDay)) +
   geom_boxplot() +
-  facet_grid(promo ~ .)
+  facet_grid(. ~ promo)
 
 ggplot(datKorr %>% 
          mutate(salesPerCustomer = sales/customer,
@@ -186,28 +197,6 @@ datKorr %>%
   geom_point() +
   geom_line() +
   facet_grid(year ~ .)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

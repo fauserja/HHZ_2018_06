@@ -8,6 +8,7 @@ rm(list = ls(all.names = TRUE))
 
 # 01: Laden der zusätzlichen Pakete --------------------------------------------
 library(tidyr)
+library(dplyr)
 search()
 
 # 02: Laden der Daten ----------------------------------------------------------
@@ -15,9 +16,9 @@ dat <- read.csv("Data/preg.csv")
 dat
 
 
-# 03: Vom Wide zum LOng-Format (gather) ----------------------------------------
+# 03: Vom Wide zum Long-Format (gather) ----------------------------------------
 datTidy <- dat %>% 
-  gather(key = "Behandlung", value = "Anzahl", treatmenta, treatmentb) %>% 
+  gather(key = Behandlung, value = Anzahl, treatmenta, treatmentb) %>% 
   mutate(Behandlung = gsub("treatment", "", Behandlung))
 datTidy
 
@@ -43,10 +44,11 @@ head(tbTidy)
 # 06: Trennung von Informationen unterschiedlicher Granularität ----------------
 billboard <- read.csv("Data/billboard2.csv")
 head(billboard)
+View(billboard)
 
 songInfo <- billboard %>% 
   select(artist, track, time, date) %>% 
-  unique  # alternative: dplyr::distinct
+  distinct  # alternative: unique
 
 rankInfo <- billboard %>% 
   select(artist, track, week, rank) %>% 

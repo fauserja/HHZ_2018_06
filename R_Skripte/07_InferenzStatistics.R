@@ -1,5 +1,5 @@
 ################################################################################
-# Beispiel: Deskriptive Inferenz- Statistik                                    #
+# Beispiel: Inferenz- Statistik                                                #
 # 20./21. Februar 2018                                                         #
 ################################################################################
 
@@ -20,10 +20,10 @@ dat <- read.csv("Data/Analytics.csv", stringsAsFactors = FALSE)
 ggplot(dat,
        aes(x = sessionDuration)) +
   geom_density() + 
-  geom_vline(xintercept = 2100) +
-  geom_vline(xintercept = c(mean(dat$sessionDuration),
-                             median(dat$sessionDuration)), col = "red")
-  
+  geom_vline(xintercept = 2100) 
+median(dat$sessionDuration)
+mean(dat$sessionDuration)
+
 # Q: Welche Hypothese (Forschungsebene) soll geprüft werden?
 # A: Behauptung: Durchschnittliche `sessionDuration` > 2100s 
 
@@ -34,11 +34,11 @@ ggplot(dat,
 # H1: sessionDuration > 2100s
 
 # Ergebnis aus den Daten:
-
 sum(dat$sessionDuration > 2100)  # Fälle mit `Erfolg`
 nrow(dat)                        # ANzahl der UE
 
 binom.test(x = sum(dat$sessionDuration > 2100),
+           p = 0.5,
            n = nrow(dat),
            alternative = "greater")
 
@@ -112,7 +112,7 @@ wilcox.test(avgTimeOnPage ~ userGender, data = dat)
 rm(list = ls(all.names = TRUE))
   
 # Gepaarte STichprobe:
-dat <- read.table("https://raw.githubusercontent.com/INWT/RKI_170925/master/Data/orderVal.txt",
+dat <- read.table("Data/orderVal.txt",
                   header = TRUE, sep = ";")
 str(dat)
 head(dat)
@@ -151,12 +151,13 @@ anova
 summary(anova)
 
 TukeyHSD(anova)
+plot(TukeyHSD(anova))
 
 # Falls normalverteilte Untergruppen nicht gegeben sind:
 kruskal.test(hp ~ cyl, data = mtcars)
 
 # Paarweise Vergleiche analog zu `TukeyHSD` sind mittels der Funktion
-pairwise.wilcox.test()
+pairwise.wilcox.test(mtcars$hp, mtcars$cyl, data = mtcars, bonferroni = "bonferroni")
 # möglich. Die Hilfe listet die Möglichkeiten zur Korrektur der alpha-Fehler-
 # Inflation auf.
 
