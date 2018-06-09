@@ -1,0 +1,4 @@
+"nachname"	"vornamen"	"alter"
+"Müller"	"Julia"	29
+"Schmidt"	"Mia"	4
+"Meier"	"Leon"	NA

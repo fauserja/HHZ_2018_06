@@ -1,165 +1,161 @@
 ################################################################################
-# Datenmanagement in R                                                         #
-# Juni 2018                                                                    #
+# Datenmagagement - Schulung am HHZ                                            #
+# Datum: 4.6.18                                                                #
+#                                                                              #
 # Autor: Steffen Wagner                                                        #
 # Email: steffen.wagner@inwt-statistics.de                                     #
 ################################################################################
 rm(list = ls(all.names = TRUE))
 
+
 # 01: Laden der benötigten Pakete ----------------------------------------------
 library(dplyr)
-library(tidyr)
 library(readr)
+library(tidyr)
+search()
 
-
-#02: Laden der Daten ----------------------------------------------------------
+# 02: Laden der Daten ----------------------------------------------------------
 readLines("Data/AnalyticsRaw.csv", n = 5)
-dat <- read.table(file = "Data/AnalyticsRaw.csv", 
+dat <- read.table("Data/AnalyticsRaw.csv", 
                   header = TRUE, 
-                  sep = ",",
+                  sep = ",", 
                   dec = ".")
 View(dat)
-str(dat)
 
-#03: Datenmanagement mi `dplyr` ------------------------------------------------
 
-#03a: Auswahl bestimmter Spalten -----------------------------------------------
-select(dat, date, users, gender)      # dplyr syntax
-dat[ , c("date", "users", "gender")]  # klassisches Subsetting
+# 03: Datenmanagement mit dplyr ------------------------------------------------
 
-# 03b: Auswahl bestimmer Zeilen: -----------------------------------------------
-slice(dat, 1:10)  # dplyr syntax
-dat[1:10, ]       # klassisches positional Subsetting
-filter(dat, gender == 0)  # dplyr: logical Subsetting
+# 03a: Auswahl bestimmter Spalten: ---------------------------------------------
+View(dat[ , c("date", "gender", "pageviews")])
+select(dat, date, gender, pageviews)
 
-# 03c: Erzeugung neuer Variablen -----------------------------------------------
+# 03b: Auswahl bestimmter Zeilen -----------------------------------------------
+# positional
+dat[ 1:10, ]
+slice(dat, 1:10)
+
+# logisches
+dat$gender == 0
+dat[dat$gender == 0, ]
+filter(dat, gender == 0)
+
+# 03c: Erzeugung neuer Metriken ------------------------------------------------
+head(dat)
+tail(dat)
 mutate(dat, 
-       date = as.Date(as.character(date), 
-                            format = "%Y%m%d"),
-       gender = factor(gender, levels = 0:1, labels = c("m", "w"))
-       )
+       date = as.Date(as.character(date), format = "%Y%m%d"),
+       gender = factor(gender, levels = 0:2, labels = c("female", "male", "neutral")),
+       newUserClass = cut(newUsers, breaks = c(0, 10, 20, Inf)))
 
-# 03d: Aggregation: summarise --------------------------------------------------
-summarise(dat, meanBounces = mean(bounces))
+# Exkurs: Anlegen von Date-Objekte
+as.Date(as.character(dat$date), format = "%Y%m%d")
+# Hilfe zu den Zeit-Formaten: ?strptime
+
+
+# 03d: Aggregatsfunktion -------------------------------------------------------
+summarise(dat, meanBounce = mean(bounces))
 
 # 03e: Sortierung --------------------------------------------------------------
-dat %>% arrange(sessions) %>% slice(1:10) # aufsteigend
-dat %>% arrange(desc(sessions)) %>% slice(1:10) # absteigend
+arrange(dat, bounces) # aufsteigend sortiert
+arrange(dat, desc(bounces))
 
-# 03f: Chain Operator %>% ------------------------------------------------------
-datFinal <- dat %>% 
-  select(date, users, gender) %>% 
-  mutate(gender =  factor(gender, levels = 0:1, labels = c("m", "w")),
-         date = as.Date(as.character(date), 
-                        format = "%Y%m%d")) %>% 
-  filter(date > as.Date("2014-09-17")) %>% 
+
+# Syntac der dplyr-Vokabeln: 
+# - funktion(datensatz, argumente für die jeweilige Vokabel)
+# - Rückgabewert: immer data.frame
+
+
+# 03f: Chain Operator: %>% 
+# x %>% f(y, ...)  = f(x, y, ...)
+dat %>% 
+  select(sessionDuration, newUsers) %>% 
+  arrange(newUsers) %>% 
+  slice(1:10)
+
+# 03g: Gruppierung -------------------------------------------------------------
+# Gruppenweise Filtern
+dat %>% 
+  mutate(gender = factor(gender, 
+                         levels = 0:2, 
+                         labels = c("female", "male", "neutral"))) %>% 
   group_by(gender) %>% 
-  summarise(n = n(),
-            meanUsers = mean(users))
+  arrange(desc(bounces)) %>% 
+  slice(1:5) %>% 
+  View
+
+# Gruppenspezifische Aggregate
+dat %>% 
+  mutate(gender = factor(gender, 
+                         levels = 0:2, 
+                         labels = c("female", "male", "neutral"))) %>% 
+  group_by(gender) %>% 
+  summarise(meanBounces = mean(bounces))
+
+# Gruppenweise neue Metriken:
+dat <- dat %>% 
+  mutate(gender = factor(gender, 
+                         levels = 0:2, 
+                         labels = c("female", "male", "neutral"))) %>% 
+  group_by(gender) %>% 
+  mutate(sessionsDeMeaned = sessions - mean(sessions)) %>% 
+  ungroup
+
+slice(select(dat, sessionDuration, newUsers), 1:10)
+
+# Beispiel: Pipe-Operator außerhalb Datenkontexts ------------------------------
+round(
+  prop.table(
+    table(dat$gender)
+  ), 
+  digits = 3)
 
 
-#04: Umstrukturierung von Datensätzen (Reshaping) ------------------------------
+dat$gender %>%
+  table() %>% 
+  prop.table() %>% 
+  round(digits = 3)
 
-# Laden der Daten
+
+
+# 04: Umstrukturierung von Datensätzen -----------------------------------------
+
+# 04a: Problem Tabelle im 'wide' soll ins 'long' trasformiert werden -----------
 preg <- read_csv("Data/preg.csv")
-preg
-
-# Die nachfolgend verwendeten Funktion sind aus dem Paket `tidyr`, das bereits 
-# im Abschnitt `01: Laden der Pakete` geladen wurde.
-
-#04a: von wide -> long-Format (gather) -----------------------------------------
 preg %>% 
-  gather(key = "Treatment", 
-         value = "Value", treatmenta, treatmentb) %>% 
-  mutate(Treatment = gsub(pattern = "treatment", 
-                          replacement = "", 
-                          Treatment))
-
-#04b: von long -> wide (spread) ------------------------------------------------
+  gather(key = "Treatment",
+         value = "Messwert",
+         treatmenta, treatmentb) %>% 
+  mutate(Treatment = gsub("treatment", "", Treatment))
+          
+# 04b: Problem Tabelle im 'long' soll ins 'wide' trasformiert werden -----------
 weather2 <- read_csv("Data/weather2.csv")
 head(weather2)
-tail(weather2)
-weather2 %>% slice(1:6)
-
-# Anlegen einer zusätzlichen Ausprägung in Spalte `element`, so dass wide Format
-# drei Spalten mit Messwerten enthält
-weather2$element[1] <- "tmean"
+weather2$element[3] <- "tmean"
 head(weather2)
 
-weather2 <- weather2 %>%
-  spread(key = element, value = value) %>%
-  # filter(!is.na(tmean)) %>%
-  mutate(day = gsub("d", "", day),
-         datum = paste(year, month, day, sep = "-"),
-         datum = as.Date(datum))
-
-head(weather2)
+weather2 %>% 
+  spread(key = "element", value = "value", fill = 0) %>% 
+  mutate(date = paste(year, month, day, sep = "-"),
+         date = as.Date(date, format = "%Y-%m-d%d"))
 
 
-
-#04c: Trennung von multipler Information in einer Spalte -----------------------
-tb2 <- read_csv("Data/tb2.csv")
-table(tb2$demo)  # Häufigkeitstabelle
-
-tb2 %>% 
-  separate(demo, c("geschl", "age"), 1) %>% 
-  head
-
-
-
-#04d: Separation von unterschiedlichen Informationen ---------------------------
+# 04c: Separation von unterschiedlichen Informationen --------------------------
 billboard2 <- read_csv("Data/billboard2.csv")
 
-# Die Datei enthält Stammdaten und Zeitreihendaten, die eigentlich getrennt
-# organisiert sein sollten.
+# Problem: Vermischung von Stammdaten mit Zeitreihendatren
+# Lösung: Trennung der Informationen + gezielte Zusammenführung
 
 # Stammdaten
-songinfo <- billboard2 %>% 
+songInfo <- billboard2 %>% 
   select(artist, track, time, date) %>% 
-  distinct()  # Verdichtung, so dass jede Kombination genau
-              # einmal auftritt
+  distinct() %>% 
+  mutate(ID = 1:n())
 
-# Anlegen einer ID-Variablen
-songinfo <- songinfo %>% 
-  mutate(songID = 1:n())
-songinfo$songID[1:20]
-
-# Erstellen der Billboard-Rankings (Zeitreihe)
+# Zeitreihen
 ranking <- billboard2 %>% 
-  select(artist, track, week, rank) %>% 
-  arrange(artist, track, week)
-head(ranking)
-
-
-# Zusammenführen der unterschiedlichen Datensätze, um ID-Info in Zeitreihen
-# anzulegen (Funktion `left_join` aus Paket `dplyr`)
-left_join(ranking, 
-          songinfo %>% 
-            select(track, artist, songID),
-          by = c("track", "artist")) %>% 
-  head
-
-# Beispiel: Join bei unterschiedlichen Spaltennamen:
-left_join(ranking %>% 
-            rename(trackNew = track, artistNew = artist) , 
-          songinfo %>% 
-            select(track, artist, songID),
-          by = c("trackNew" = "track", "artistNew" = "artist")) %>%
-  select(songID, week, rank) %>% 
-  head
-
-
-# Die Funktion `rename` findet sich ebefnalls im Paket `dplyr`
-ranking %>% 
-  rename(trackNew = track, artistNew = artist) %>% 
-  head
-
-
-
-
-
-
-
+  left_join(songInfo,
+            by = c("artist" = "artist", "track", "time", "date")) %>% 
+  select(ID, week, rank)
 
 
 
