@@ -1,0 +1,13 @@
+### Team: `r TeamId`
+
+
+```{r}
+dat %>% 
+  filter(Team == TeamId) %>% 
+  ggplot(aes(x = TimeToImpact, y = MagnitudeToImpact, label = Pid)) +
+  geom_point(col = "red") +
+  geom_text(hjust = 0, vjust = 0) +
+  labs(title = paste("Team:", TeamId))
+
+
+```
